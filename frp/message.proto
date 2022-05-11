@@ -1,0 +1,11 @@
+syntax = "proto3";
+package proto;
+option go_package = "./proto";
+
+message Message{
+    int32 MsgType = 1;
+    string UserAdress = 2;
+    string ServerAdress = 3;
+    string LocalAdress = 4;
+    bytes Content = 5;
+}
