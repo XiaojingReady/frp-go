@@ -1,4 +1,4 @@
-package client
+package server
 
 import (
 	"bytes"
@@ -12,15 +12,6 @@ import (
 const (
 	MAXLEN int = 1024
 )
-
-func Connect(remoteAdress string) (net.Conn, error) {
-	remoteConn, err := net.Dial("tcp", remoteAdress)
-	if err != nil {
-		// fmt.Printf("Failed: can not connect to %s \n", remoteAdress)
-		return nil, err
-	}
-	return remoteConn, nil
-}
 
 //整形转换成字节
 func IntToBytes(val int64) ([]byte, error) {
@@ -66,10 +57,8 @@ func DecodeOneMsg(conn net.Conn) (*pb.Message, error) {
 		// fmt.Printf("Read length failed: %v \n", err.Error())
 		return nil, err
 	}
-	len_, err := BytesToInt(byteLen)
-	if err != nil {
-		return nil, err
-	}
+	len_, _ := BytesToInt(byteLen)
+	// fmt.Printf("Decode %v bytes", len_)
 	// 读取指定长度的内容
 	byteContent, err := ReadBytes(conn, len_)
 	if err != nil {
@@ -88,9 +77,9 @@ func DecodeOneMsg(conn net.Conn) (*pb.Message, error) {
 }
 
 // 封装一条信息
-func EncodeOneMsg(msgType int32, userAdress string, serverAdress string, localAdress string, content []byte) ([]byte, error) {
+func EncodeOneMsg(msgType int, userAdress string, serverAdress string, localAdress string, content []byte) ([]byte, error) {
 	msg := pb.Message{
-		MsgType:      msgType,
+		MsgType:      2,
 		UserAdress:   userAdress,
 		ServerAdress: serverAdress,
 		LocalAdress:  localAdress,
@@ -110,6 +99,5 @@ func EncodeOneMsg(msgType int32, userAdress string, serverAdress string, localAd
 	// 拼接
 	writeByte := append(lenByte[:], msgByte[:]...)
 	// fmt.Printf("\n\n[Encode: content-%vbytes msg-%vbytes len-%vbytes total-%vbytes]\n\n", len(content), len(msgByte), len(lenByte), len(writeByte))
-
 	return writeByte, nil
 }

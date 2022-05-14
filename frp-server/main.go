@@ -1,8 +1,6 @@
 package main
 
-import (
-	"server"
-)
+import "example/server"
 
 func main() {
 	clientAdress := ":9200"
